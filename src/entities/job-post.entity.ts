@@ -2,7 +2,7 @@
 
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Auctioneer } from './auctioneer.entity';
-// import { Bid } from './bid.entity';
+import { Bid } from './bid.entity';
 
 @Entity()
 export class JobPost {
@@ -54,6 +54,6 @@ export class JobPost {
   @Column({ nullable: true })
   job_end_date: Date;
 
-  // @OneToMany(() => Bid, bid => bid.job_post)
-  // bids: Bid[];
+  @OneToMany(() => Bid, bid => bid.job_post)
+  bids: Bid[];
 }

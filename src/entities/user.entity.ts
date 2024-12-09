@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-// import { Bidder } from './bidder.entity';
+import { Bidder } from './bidder.entity';
 import { Auctioneer } from './auctioneer.entity';
 
 @Entity()
@@ -28,8 +28,8 @@ export class User {
   @Column({ nullable: true })
   profile_pic: string;
 
-  // @OneToMany(() => Bidder, bidder => bidder.user)
-  // bidder: Bidder;
+  @OneToMany(() => Bidder, bidder => bidder.user)
+  bidder: Bidder;
 
   @OneToMany(() => Auctioneer, auctioneer => auctioneer.user)
   auctioneer: Auctioneer;

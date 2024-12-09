@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Auctioneer } from './auctioneer.entity';
-import { Bidder } from './bidder.entity';
+// import { Bidder } from './bidder.entity';
 import { Review } from './review.entity';
 
 @Entity()
@@ -14,8 +14,8 @@ export class Job {
   // @ManyToOne(() => Auctioneer, auctioneer => auctioneer.jobs)
   // auctioneer: Auctioneer;
 
-  @ManyToOne(() => Bidder, bidder => bidder.jobs)
-  bidder: Bidder;
+  // @ManyToOne(() => Bidder, bidder => bidder.jobs)
+  // bidder: Bidder;
 
   @Column()
   job_start_date: Date;
