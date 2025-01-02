@@ -6,6 +6,10 @@ import { Auctioneer } from '../entities/auctioneer.entity';
 import { Bidder } from '../entities/bidder.entity';
 import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { FilterJobPostsDto } from './dto/filter-job-posts.dto';
+import { JobPostQueryService } from './job-post-query.service';
+import { IJobPostResponse, IJobPost } from './interfaces/job-post.interface';
+import { ErrorUtils } from 'src/utils/error.utils';
+import { JobPostMapper } from './mapper/job-post.mapper';
 
 @Injectable()
 export class JobPostsService {
@@ -16,6 +20,8 @@ export class JobPostsService {
     private auctioneerRepository: Repository<Auctioneer>,
     @InjectRepository(Bidder)
     private bidderRepository: Repository<Bidder>,
+
+    private jobPostQueryService: JobPostQueryService,
   ) {}
 
   async createJobPost(userId: number, createJobPostDto: CreateJobPostDto): Promise<JobPost> {
@@ -34,6 +40,38 @@ export class JobPostsService {
     });
 
     return this.jobPostRepository.save(jobPost);
+  }
+
+  async getJobPostDetails(userId: number, jobPostId: number): Promise<IJobPostResponse> {
+    try {
+      const jobPost = await this.jobPostRepository.findOne({
+        where: { 
+          id: jobPostId,
+          auctioneer: { user: { id: userId } }
+        },
+        relations: [
+          'auctioneer',
+          'auctioneer.user',
+          'bids',
+          'bids.bidder',
+          'bids.bidder.user'
+        ],
+      });
+
+      if (!jobPost) {
+        throw new NotFoundException('Job post not found');
+      }
+
+      const mappedJobPost = JobPostMapper.toDTO(jobPost, userId);
+
+      return {
+        success: true,
+        message: 'Job post details retrieved successfully',
+        data: mappedJobPost
+      };
+    } catch (error) {
+      return ErrorUtils.createErrorResponse(error);
+    }
   }
 
   async getJobPostsByAuctioneer(userId: number): Promise<JobPost[]> {
@@ -73,72 +111,57 @@ export class JobPostsService {
     };
   }
 
-  async getJobPostsForBidder(userId: number, filterDto: FilterJobPostsDto): Promise<JobPost[]> {
+  async getJobPostsForBidder(userId: number, filterDto: FilterJobPostsDto): Promise<IJobPostResponse> {
+    try {
     const bidder = await this.bidderRepository.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
     });
 
-    if (!bidder) {
+    if (!bidder || bidder.user.user_type !== 2) {
       throw new UnauthorizedException('Only bidders can access this endpoint');
     }
 
-    if (!bidder.latitude || !bidder.longitude) {
-      throw new BadRequestException('Bidder location not set');
+    const jobPosts = await this.jobPostQueryService.getJobPostsForBidder(userId, filterDto);
+    const mappedJobPosts = jobPosts.map(post => JobPostMapper.toDTO(post, userId));
+    // const mappedJobPosts: IJobPost[] = jobPosts.map(post => ({
+    //   id: post.id,
+    //   boatLength: Number(post.boatLength), // Convert string to number
+    //   additionalServices: post.additionalServices,
+    //   notes: post.notes,
+    //   location: post.location,
+    //   preferredDate: post.preferredDate,
+    //   max_bid_amount: post.max_bid_amount,
+    //   min_bid_amount: post.min_bid_amount,
+    //   bid_start_date: post.bid_start_date,
+    //   bid_end_date: post.bid_end_date,
+    //   job_start_date: post.job_start_date,
+    //   job_end_date: post.job_end_date,
+    //   auctioneer: {
+    //     id: post.auctioneer.id,
+    //     company_name: post.auctioneer.company_name,
+    //     user: {
+    //       id: post.auctioneer.user.id,
+    //       email: post.auctioneer.user.email,
+    //       first_name: post.auctioneer.user.first_name,
+    //       last_name: post.auctioneer.user.last_name
+    //     },
+    //   },
+    //   bids: post.bids?.map(bid => ({
+    //     id: bid.id,
+    //     amount: bid.bid_amount,
+    //     message: bid.message,
+    //     bidder: `${bid.bidder.user.first_name} ${bid.bidder.user.last_name}`
+    //   })) || []
+    // }));
+
+    return {
+      success: true,
+      message: 'Job posts retrieved successfully',
+      data: mappedJobPosts,
+    };
+    } catch (error) {
+      return ErrorUtils.createErrorResponse(error);
     }
-
-    const radius = filterDto.radius || 7; // Default 7 km
-    const kmToRadian = radius / 6371; // Earth's radius in km
-
-    // Create query builder
-    let query = this.jobPostRepository
-      .createQueryBuilder('jobPost')
-      .leftJoinAndSelect('jobPost.auctioneer', 'auctioneer')
-      .leftJoinAndSelect('jobPost.bids', 'bids');
-
-    // Apply location filter using Haversine formula
-    query = query
-      .where(
-        `(
-          6371 * acos(
-            cos(radians(:latitude)) * 
-            cos(radians(ST_X(jobPost.location::geometry))) * 
-            cos(radians(ST_Y(jobPost.location::geometry)) - radians(:longitude)) + 
-            sin(radians(:latitude)) * 
-            sin(radians(ST_X(jobPost.location::geometry)))
-          )
-        ) <= :radius`,
-        {
-          latitude: bidder.latitude,
-          longitude: bidder.longitude,
-          radius,
-        },
-      );
-
-    // Apply boat length filter if provided
-    if (filterDto.boatLengthFrom !== undefined) {
-      query = query.andWhere('jobPost.boatLength >= :boatLengthFrom', {
-        boatLengthFrom: filterDto.boatLengthFrom,
-      });
-    }
-
-    if (filterDto.boatLengthTo !== undefined) {
-      query = query.andWhere('jobPost.boatLength <= :boatLengthTo', {
-        boatLengthTo: filterDto.boatLengthTo,
-      });
-    }
-
-    // Apply additional services filter if provided
-    if (filterDto.additionalServices) {
-      const services = filterDto.additionalServices.split(',').map(s => s.trim());
-      if (services.length > 0) {
-        query = query.andWhere('jobPost.additionalServices @> :services', {
-          services,
-        });
-      }
-    }
-
-    // Execute query
-    return query.getMany();
   }
 }

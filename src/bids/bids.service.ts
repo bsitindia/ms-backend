@@ -47,12 +47,15 @@ export class BidsService {
     // Create and save the bid
     const bid = this.bidRepository.create({
       job_post: jobPost,
-      bidder: user.bidder,
+      bidder: user.bidder[0],
       bid_amount: createBidDto.bid_amount,
       message: createBidDto.message,
       negosiation: true, // Default value as per requirement
     });
+    console.log(user.bidder);
+    console.log(bid.bidder);
+    this.bidRepository.insert(bid)
 
-    return this.bidRepository.save(bid);
+    return bid;
   }
 }

@@ -1,5 +1,5 @@
 
-import { Controller, Post, Get, Body, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request, Query, Param } from '@nestjs/common';
 
 import { JobPostsService } from './job-posts.service';
 
@@ -13,7 +13,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('jobpost')
 @UseGuards(JwtAuthGuard)
-export class JobPostsController {
+export class JobPostsController { 
   constructor(private readonly jobPostsService: JobPostsService) {}
 
   @Post()
@@ -24,6 +24,11 @@ export class JobPostsController {
   @Get('list')
   async getMyJobPosts(@Request() req) {
     return this.jobPostsService.getJobPostsByAuctioneer(req.user.userId);
+  }
+
+  @Get(':id')
+  async getJobPostDetails(@Request() req, @Param('id') id: number) {
+    return this.jobPostsService.getJobPostDetails(req.user.userId, id);
   }
 
 

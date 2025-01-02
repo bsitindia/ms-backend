@@ -29,8 +29,9 @@ export class BiddersService {
     if (user.user_type !== 2) {
       throw new UnauthorizedException('Only bidders can create bidder profiles');
     }
+    console.log(user.bidder);
 
-    if (user.bidder) {
+    if (user.bidder[0]) {
       throw new BadRequestException('Bidder profile already exists');
     }
 

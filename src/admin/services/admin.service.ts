@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../entities/user.entity';
 import { Auctioneer } from '../../entities/auctioneer.entity';
+import { Bidder } from '../../entities/bidder.entity';
+import { JobPost } from '../../entities/job-post.entity';
 import { LoginDto } from '../dto/login.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -14,6 +16,10 @@ export class AdminService {
     private userRepository: Repository<User>,
     @InjectRepository(Auctioneer)
     private auctioneerRepository: Repository<Auctioneer>,
+    @InjectRepository(Bidder)
+    private bidderRepository: Repository<Bidder>,
+    @InjectRepository(JobPost)
+    private jobPostRepository: Repository<JobPost>,
     private jwtService: JwtService,
   ) {}
 
@@ -30,14 +36,18 @@ export class AdminService {
   }
 
   async getDashboardStats() {
-    const [userCount, auctioneerCount] = await Promise.all([
+    const [userCount, auctioneerCount, bidderCount, jobPostCount] = await Promise.all([
       this.userRepository.count(),
       this.auctioneerRepository.count(),
+      this.bidderRepository.count(),
+      this.jobPostRepository.count(),
     ]);
 
     return {
       users: userCount,
       auctioneers: auctioneerCount,
+      bidders: bidderCount,
+      jobPosts: jobPostCount,
     };
   }
 }

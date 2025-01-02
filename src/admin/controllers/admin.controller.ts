@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Render, UseGuards, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Render, UseGuards, Req, Res, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
 import { AdminService } from '../services/admin.service';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
 import { LoginDto } from '../dto/login.dto';
+console.log('AdminController');
 
 @Controller('admin')
 export class AdminController {
@@ -10,7 +11,10 @@ export class AdminController {
 
   @Get('login')
   @Render('admin/login')
-  getLogin() {
+  getLogin(@Req() req, @Res() res: Response) {
+    if (req.cookies.admin_token) {
+      return res.redirect('/admin/dashboard');
+    }
     return { message: '' };
   }
 
@@ -19,18 +23,14 @@ export class AdminController {
     try {
       const result = await this.adminService.validateAdmin(loginDto);
       if (result && result.token) {
-
         res.cookie('admin_token', result.token, {
-
           httpOnly: true,
-
           secure: process.env.NODE_ENV === 'production',
-
           sameSite: 'strict',
 
           maxAge: 24 * 60 * 60 * 1000 // 24 hours
 
-        });
+       });
         return res.redirect('/admin/dashboard');
       }
       return res.render('admin/login', { message: 'Invalid credentials' });
@@ -46,13 +46,17 @@ export class AdminController {
     const stats = await this.adminService.getDashboardStats();
     return { stats };
   }
+
   @Get('logout')
-
   async logout(@Res() res: Response) {
-
     res.clearCookie('admin_token');
-
     return res.redirect('/admin/login');
-
   }
+
+  // // Catch-all route for 404 errors
+  // @Get('*')
+  // @Render('admin/404')
+  // notFound() {
+  //   throw new NotFoundException();
+  // }
 }

@@ -67,4 +67,8 @@ export class CreateJobPostDto {
   @IsOptional()
   @IsDateString()
   job_end_date?: Date;
+
+  @IsOptional()
+  @IsString()
+  boatName?: string; // Add this line
 }

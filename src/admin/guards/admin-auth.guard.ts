@@ -18,6 +18,7 @@ export class AdminAuthGuard implements CanActivate {
     const token = request.cookies['admin_token'];
 
     if (!token) {
+      console.log("err");
       throw new UnauthorizedException();
     }
 
@@ -28,12 +29,14 @@ export class AdminAuthGuard implements CanActivate {
       });
 
       if (!user || user.user_type !== 0) {
+        console.log("err");
         throw new UnauthorizedException();
       }
 
       request.user = user;
       return true;
     } catch {
+      console.log("err");
       throw new UnauthorizedException();
     }
   }

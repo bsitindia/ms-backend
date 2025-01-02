@@ -1,5 +1,3 @@
-
-
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Auctioneer } from './auctioneer.entity';
 import { Bid } from './bid.entity';
@@ -12,11 +10,11 @@ export class JobPost {
   @ManyToOne(() => Auctioneer, auctioneer => auctioneer.jobPosts)
   auctioneer: Auctioneer;
 
-  @Column({ nullable: false, default:"20" })
+  @Column({ nullable: false, default: "20" })
   boatLength: string;
 
   @Column("text", { array: true })
-  additionalServices: string[];  
+  additionalServices: string[];
 
   @Column({ nullable: true })
   notes: string;
@@ -30,8 +28,8 @@ export class JobPost {
     placeId: string;
   };
 
-  @Column({default:1,nullable:false})
-  dirtinessLevel:number;
+  @Column({ default: 1, nullable: false })
+  dirtinessLevel: number;
 
   @Column({ nullable: true })
   preferredDate: string;
@@ -53,6 +51,9 @@ export class JobPost {
 
   @Column({ nullable: true })
   job_end_date: Date;
+
+  @Column({ nullable: true })
+  boatName: string; // Add this line
 
   @OneToMany(() => Bid, bid => bid.job_post)
   bids: Bid[];

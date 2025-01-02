@@ -13,6 +13,50 @@
                     Auctioneers
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/bidders" style="color: #00838F;">
+                    <i class="bi bi-people me-2"></i>
+                    Bidders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/jobposts" style="color: #00838F;">
+                    <i class="bi bi-briefcase me-2"></i>
+                    Job Posts
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="/admin/logout" style="color: #d32f2f;">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Logout
+                </a>
+            </li>
         </ul>
     </div>
+
+    <style>
+        .sidebar {
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            min-height: calc(100vh - 56px);
+        }
+        
+        .nav-link {
+            padding: .75rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(0, 131, 143, 0.1);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(0, 131, 143, 0.2);
+            font-weight: 600;
+        }
+        
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+    </style>
 </nav>
