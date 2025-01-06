@@ -32,9 +32,9 @@ export class JobPostQueryService {
       .leftJoinAndSelect('auctioneer.user', 'user')
       .leftJoinAndSelect('jobpost.bids', 'bids')
       .leftJoinAndSelect('bids.bidder', 'bidder')
-      .leftJoinAndSelect('bidder.user', 'bidderUser')
-      .where('NOT EXISTS (SELECT 1 FROM bid WHERE bid.jobPostId = jobPost.id AND bid.bidderId = :bidderId)', 
-        { bidderId: bidder.id });
+      .leftJoinAndSelect('bidder.user', 'bidderUser');
+      // .where('NOT EXISTS (SELECT 1 FROM bid WHERE bid.jobPostId = jobPost.id AND bid.bidderId = :bidderId)', 
+      //   { bidderId: bidder.id });
 
     // Apply location filter
     // if (bidder.latitude && bidder.longitude) {
