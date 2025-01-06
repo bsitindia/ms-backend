@@ -26,7 +26,7 @@ export class JobPostsController {
     return this.jobPostsService.getJobPostsByAuctioneer(req.user.userId);
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async getJobPostDetails(@Request() req, @Param('id') id: number) {
     return this.jobPostsService.getJobPostDetails(req.user.userId, id);
   }
