@@ -33,7 +33,7 @@ export class JobPostQueryService {
       .leftJoinAndSelect('jobpost.bids', 'bids')
       .leftJoinAndSelect('bids.bidder', 'bidder')
       .leftJoinAndSelect('bidder.user', 'bidderUser')
-      .where('NOT EXISTS (SELECT 1 FROM bid WHERE bid.job_post_id = jobPost.id AND bid.bidder_id = :bidderId)', 
+      .where('NOT EXISTS (SELECT 1 FROM bid WHERE bid.jobPostId = jobPost.id AND bid.bidderId = :bidderId)', 
         { bidderId: bidder.id });
 
     // Apply location filter
