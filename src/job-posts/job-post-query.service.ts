@@ -32,9 +32,18 @@ export class JobPostQueryService {
       .leftJoinAndSelect('auctioneer.user', 'user')
       .leftJoinAndSelect('jobpost.bids', 'bids')
       .leftJoinAndSelect('bids.bidder', 'bidder')
-      .leftJoinAndSelect('bidder.user', 'bidderUser');
-      // .where('NOT EXISTS (SELECT 1 FROM bid WHERE bid.jobPostId = jobPost.id AND bid.bidderId = :bidderId)', 
-      //   { bidderId: bidder.id });
+      .leftJoinAndSelect('bidder.user', 'bidderUser')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from('bid', 'bid')
+          .where('bid.jobPostId = jobPost.id')
+          .andWhere('bid.bidderId = :bidderId')
+          .getQuery();
+        return `NOT EXISTS (${subQuery})`;
+      })
+      .setParameter('bidderId', bidder.id);
 
     // Apply location filter
     // if (bidder.latitude && bidder.longitude) {
