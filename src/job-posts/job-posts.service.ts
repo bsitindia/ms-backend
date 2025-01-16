@@ -46,8 +46,7 @@ export class JobPostsService {
     try {
       const jobPost = await this.jobPostRepository.findOne({
         where: { 
-          id: jobPostId,
-          auctioneer: { user: { id: userId } }
+          id: jobPostId
         },
         relations: [
           'auctioneer',

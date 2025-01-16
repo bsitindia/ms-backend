@@ -33,6 +33,7 @@ export class JobPostMapper {
       location: jobPost.location,
       preferredDate: jobPost.preferredDate,
       max_bid_amount: jobPost.max_bid_amount,
+      min_bid_amount: jobPost.min_bid_amount,
       bid_start_date: jobPost.bid_start_date,
       bid_end_date: jobPost.bid_end_date,
       job_start_date: jobPost.job_start_date,

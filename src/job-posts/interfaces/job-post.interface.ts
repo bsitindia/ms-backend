@@ -20,6 +20,7 @@ export interface IJobPost {
   location?: ILocation;
   preferredDate?: string;
   max_bid_amount?: number;
+  min_bid_amount?: number;
   bid_start_date?: Date;
   bid_end_date?: Date;
   job_start_date?: Date;
