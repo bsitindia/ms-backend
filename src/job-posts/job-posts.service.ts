@@ -163,4 +163,47 @@ export class JobPostsService {
       return ErrorUtils.createErrorResponse(error);
     }
   }
+
+
+  async getJobPostsByBidder(userId: number): Promise<JobPost[]> {
+    // First find the bidder
+    const bidder = await this.bidderRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+
+    if (!bidder) {
+      throw new UnauthorizedException('Only bidders can access this endpoint');
+    }
+
+    // Get job posts where the bidder has placed bids
+    const jobPosts = await this.jobPostRepository
+      .createQueryBuilder('jobpost')
+      .leftJoinAndSelect('jobpost.auctioneer', 'auctioneer')
+      .leftJoinAndSelect('auctioneer.user', 'auctioneerUser')
+      .leftJoinAndSelect('jobpost.bids', 'bids')
+      .leftJoinAndSelect('bids.bidder', 'bidder')
+      .leftJoinAndSelect('bidder.user', 'bidderUser')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from('bid', 'b')
+          .where('b.jobPostId = jobPost.id')
+          .andWhere('b.bidderId = :bidderId')
+          .getQuery();
+        return 'EXISTS ' + subQuery;
+      })
+      .setParameter('bidderId', bidder.id)
+      .getMany();
+  
+    return jobPosts.map(jobPost => {
+      const myBid = jobPost.bids.find(bid => bid.bidder.id === bidder.id);
+      return {
+        ...jobPost,
+        my_bid_amount: myBid ? myBid.bid_amount : null
+      };
+    });
+
+  }
 }

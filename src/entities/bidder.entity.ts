@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Bid } from './bid.entity';
-// import { Job } from './job.entity';
+import { Job } from './job.entity';
 
 @Entity()
 export class Bidder {
@@ -32,6 +32,6 @@ export class Bidder {
   @OneToMany(() => Bid, bid => bid.bidder)
   bids: Bid[];
 
-  // @OneToMany(() => Job, job => job.bidder)
-  // jobs: Job[];
+  @OneToMany(() => Job, job => job.bidder)
+  jobs: Job[];
 }

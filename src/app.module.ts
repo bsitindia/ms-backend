@@ -11,6 +11,8 @@ import { BiddersModule } from './bidders/bidders.module';
 import { Bidder } from './entities/bidder.entity';
 import { Bid } from './entities/bid.entity';
 import { BidsModule } from './bids/bids.module';
+import { Job } from './entities/job.entity';
+import { JobsModule } from './jobs/jobs.module';
 
 
 @Module({
@@ -26,11 +28,11 @@ import { BidsModule } from './bids/bids.module';
       database: process.env.DB_NAME || 'ms_backend',
 
       entities: [
-        User,Auctioneer,JobPost,Bidder, Bid,
+        User,Auctioneer,JobPost,Bidder, Bid, Job,
       ],
       synchronize: true,
     }),
-    AuthModule, JobPostsModule, AdminModule,BiddersModule, BidsModule,
+    AuthModule, JobPostsModule, AdminModule,BiddersModule, BidsModule, JobsModule,
   ],
 })
 export class AppModule {}

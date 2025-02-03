@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { JobPost } from './job-post.entity';
-// import { Job } from './job.entity';
+import { Job } from './job.entity';
 
 @Entity()
 export class Auctioneer {
@@ -23,8 +23,8 @@ export class Auctioneer {
   @OneToMany(() => JobPost, jobPost => jobPost.auctioneer)
   jobPosts: JobPost[];
 
-  // @OneToMany(() => Job, job => job.auctioneer)
-  // jobs: Job[];
+  @OneToMany(() => Job, job => job.auctioneer)
+  jobs: Job[];
 
 
 }

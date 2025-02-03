@@ -31,7 +31,10 @@ export class JobPostsController {
     return this.jobPostsService.getJobPostDetails(req.user.userId, id);
   }
 
-
+  @Get('my-bids')
+  async getMyBiddedPosts(@Request() req) {
+    return this.jobPostsService.getJobPostsByBidder(req.user.userId);
+  }
 
 
   @Get()
