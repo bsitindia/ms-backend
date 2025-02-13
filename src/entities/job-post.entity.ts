@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { Auctioneer } from './auctioneer.entity';
 import { Bid } from './bid.entity';
 
+export type JobPostStatus = 'active' | 'bid_placed' | 'newcomment' | 'bid_accepted' | 'cancelled';
+
 @Entity()
 export class JobPost {
   @PrimaryGeneratedColumn()
@@ -51,6 +53,13 @@ export class JobPost {
 
   @Column({ nullable: true })
   job_end_date: Date;
+
+  @Column({
+    type: 'enum',
+    enum: ['active', 'bid_placed', 'newcomment', 'bid_accepted', 'cancelled'],
+    default: 'active'
+  })
+  status: JobPostStatus;
 
   @Column({ nullable: true })
   boatName: string; // Add this line

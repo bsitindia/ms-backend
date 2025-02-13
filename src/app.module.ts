@@ -13,26 +13,28 @@ import { Bid } from './entities/bid.entity';
 import { BidsModule } from './bids/bids.module';
 import { Job } from './entities/job.entity';
 import { JobsModule } from './jobs/jobs.module';
-
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type:  'postgres',
-
+      type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT) || 5432,
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || '123456',
       database: process.env.DB_NAME || 'ms_backend',
-
-      entities: [
-        User,Auctioneer,JobPost,Bidder, Bid, Job,
-      ],
+      entities: [User, Auctioneer, JobPost, Bidder, Bid, Job],
       synchronize: true,
     }),
-    AuthModule, JobPostsModule, AdminModule,BiddersModule, BidsModule, JobsModule,
+    AuthModule,
+    JobPostsModule,
+    AdminModule,
+    BiddersModule,
+    BidsModule,
+    JobsModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

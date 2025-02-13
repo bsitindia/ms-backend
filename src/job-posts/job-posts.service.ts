@@ -37,6 +37,7 @@ export class JobPostsService {
     const jobPost = this.jobPostRepository.create({
       ...createJobPostDto,
       auctioneer,
+      status: 'active'
     });
 
     return this.jobPostRepository.save(jobPost);

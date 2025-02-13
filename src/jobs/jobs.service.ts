@@ -7,6 +7,7 @@ import { User } from '../entities/user.entity';
 import { CalendarJobsDto } from './dto/calendar-jobs.dto';
 import { IJobResponse, ICalendarJob } from './interfaces/job.interface';
 import { ErrorUtils } from 'src/utils/error.utils';
+import { JobPost } from 'src/entities/job-post.entity';
 
 @Injectable()
 export class JobsService {
@@ -17,6 +18,8 @@ export class JobsService {
     private bidRepository: Repository<Bid>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(JobPost)
+    private jobPostRepository: Repository<JobPost>
   ) { }
 
   async createFromBid(userId: number, bidId: number): Promise<Job> {
@@ -53,6 +56,8 @@ export class JobsService {
     if (existingJob) {
       throw new ConflictException('This bid is already associated with a job');
     }
+    bid.job_post.status = 'bid_accepted';
+    await this.jobPostRepository.save(bid.job_post);
 
     try {
 

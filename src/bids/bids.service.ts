@@ -43,6 +43,8 @@ export class BidsService {
     if (!jobPost) {
       throw new NotFoundException('Job post not found');
     }
+    jobPost.status = 'bid_placed';
+    await this.jobPostRepository.save(jobPost);
 
     // Create and save the bid
     const bid = this.bidRepository.create({
