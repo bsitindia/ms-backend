@@ -3,6 +3,7 @@ import { Auctioneer } from './auctioneer.entity';
 import { Bidder } from './bidder.entity';
 // import { Review } from './review.entity';
 import { Bid } from './bid.entity';
+import { Payment } from './payment.entity';
 
 @Entity()
 export class Job {
@@ -33,6 +34,9 @@ export class Job {
   @OneToOne(() => Bid)
   @JoinColumn()
   bid: Bid;
+
+  @OneToMany(() => Payment, payment => payment.job)
+  payments: Payment[];
 
   // @OneToMany(() => Review, review => review.job)
   // reviews: Review[];

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { JobPost } from '../entities/job-post.entity';
 import { Auctioneer } from '../entities/auctioneer.entity';
 import { Bidder } from '../entities/bidder.entity';
@@ -85,7 +85,10 @@ export class JobPostsService {
     }
 
     return this.jobPostRepository.find({
-      where: { auctioneer: { id: auctioneer.id } },
+      where: { 
+        auctioneer: { id: auctioneer.id },
+        status: In(['active', 'bid_placed', 'newcomment'])
+       },
       relations: ['auctioneer', 'auctioneer.user', 'bids'],
       order: {
         bid_end_date: 'DESC',

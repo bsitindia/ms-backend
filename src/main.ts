@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
+import * as express from 'express';
 
 async function bootstrap() {
   // const app = await NestFactory.create(AppModule);
@@ -12,6 +13,10 @@ async function bootstrap() {
   // app.use('/admin/css',express.static(path.join(__dirname, 'admin/public/css')));
   // app.use('/admin/js', express.static(path.join(__dirname, 'admin/public/js')));
   app.use(cookieParser());
+  app.use(
+    '/payments/webhook',
+    express.raw({ type: 'application/json' }),
+  );
 
   app.setBaseViewsDir(join(__dirname, '..', 'src/views'));
   app.setViewEngine('ejs');

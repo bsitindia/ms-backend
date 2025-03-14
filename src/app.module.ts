@@ -14,6 +14,8 @@ import { BidsModule } from './bids/bids.module';
 import { Job } from './entities/job.entity';
 import { JobsModule } from './jobs/jobs.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { Payment } from './entities/payment.entity';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || '123456',
       database: process.env.DB_NAME || 'ms_backend',
-      entities: [User, Auctioneer, JobPost, Bidder, Bid, Job],
+      entities: [User, Auctioneer, JobPost, Bidder, Bid, Job, Payment],
       synchronize: true,
     }),
     AuthModule,
@@ -35,6 +37,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     BidsModule,
     JobsModule,
     DashboardModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}
